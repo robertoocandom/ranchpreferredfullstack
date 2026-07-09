@@ -43,7 +43,8 @@ adminRouter.get('/contractors', requireAdmin, async (_req, res) => {
 
 // List redemptions (all or by status)
 adminRouter.get('/redemptions', requireAdmin, async (req, res) => {
-  const status = req.query.status as string | undefined;
+  const statusParam = req.query['status'];
+  const status = typeof statusParam === 'string' ? statusParam : undefined;
   const where = status ? { status: status as 'PENDING' | 'CONFIRMED' | 'EXPIRED' } : {};
   const redemptions = await db.redemption.findMany({
     where,
@@ -71,12 +72,12 @@ adminRouter.get('/redemptions', requireAdmin, async (req, res) => {
 // Confirm a redemption (staff action)
 adminRouter.post('/redemptions/:id/confirm', requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const redemption = await db.redemption.findUnique({
-    where: { id },
-    include: { contractor: true, qrToken: true },
-  });
+  const redemption = await db.redemption.findUnique({ where: { id } });
   if (!redemption) { res.status(404).json({ error: 'not_found' }); return; }
   if (redemption.status !== 'PENDING') { res.status(409).json({ error: 'not_pending' }); return; }
+
+  const contractor = await db.contractor.findUnique({ where: { id: redemption.contractorId } });
+  const newBalance = (contractor?.points ?? 0) - redemption.pts;
 
   await db.$transaction([
     db.redemption.update({ where: { id }, data: { status: 'CONFIRMED', confirmedAt: new Date() } }),
@@ -90,7 +91,7 @@ adminRouter.post('/redemptions/:id/confirm', requireAdmin, async (req, res) => {
         contractorId: redemption.contractorId,
         type: 'REDEMPTION',
         points: -redemption.pts,
-        balanceAfter: redemption.contractor.points - redemption.pts,
+        balanceAfter: newBalance,
         descriptionEs: `Canje confirmado: ${redemption.nameEs}`,
         descriptionEn: `Redemption confirmed: ${redemption.nameEn}`,
         source: 'admin',
@@ -118,14 +119,14 @@ adminRouter.post('/rewards', requireAdmin, async (req, res) => {
 // Toggle reward active / update
 adminRouter.patch('/rewards/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const data = req.body as Partial<{ nameEs: string; nameEn: string; pts: number; active: boolean }>;
+  const data = req.body as { nameEs?: string; nameEn?: string; pts?: number; active?: boolean };
   const reward = await db.reward.update({ where: { id }, data });
   res.json(reward);
 });
 
 // List fraud alerts
 adminRouter.get('/fraud-alerts', requireAdmin, async (req, res) => {
-  const resolved = req.query.resolved === 'true';
+  const resolved = req.query['resolved'] === 'true';
   const alerts = await db.fraudAlert.findMany({
     where: { resolved },
     orderBy: { createdAt: 'desc' },
