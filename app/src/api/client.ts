@@ -171,6 +171,27 @@ export const api = {
   adminUpdateReward: (id: string, body: Partial<{ nameEs: string; nameEn: string; pts: number; active: boolean }>) => request<AdminReward>(`/admin/rewards/${id}`, { method: 'PATCH', body }),
   adminAlerts: () => request<AdminAlert[]>('/admin/fraud-alerts'),
   adminResolveAlert: (id: string) => request<{ ok: boolean }>(`/admin/fraud-alerts/${id}/resolve`, { method: 'PATCH' }),
+  cashierStores: () => request<{ id: string; name: string; address: string }[]>('/cashier/stores'),
+  cashierLogin: (storeId: string, pin: string) => request<{ token: string; storeName: string }>('/cashier/login', { method: 'POST', body: { storeId, pin } }),
+  cashierScan: (cashierToken: string, qrValue: string, amountUsd?: number) =>
+    fetch(`${API_URL}/cashier/scan`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${cashierToken}` },
+      body: JSON.stringify({ qrValue, amountUsd }),
+    }).then(async (r) => {
+      const data = await r.json();
+      if (!r.ok) throw new ApiError(r.status, data.error || 'scan_failed');
+      return data as {
+        purpose: 'ACTIVATE' | 'REDEEM';
+        contractorName: string;
+        ptsEarned?: number;
+        ptsDeducted?: number;
+        newBalance: number;
+        amountUsd?: number;
+        dollars?: number;
+        rewardName?: string;
+      };
+    }),
 };
 
 export { ApiError };

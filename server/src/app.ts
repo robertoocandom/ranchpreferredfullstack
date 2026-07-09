@@ -8,6 +8,7 @@ import { referralsRouter } from './referrals/routes';
 import { storesRouter } from './stores/routes';
 import { odooRouter } from './odoo/routes';
 import { adminRouter } from './admin/routes';
+import { cashierRouter } from './cashier/routes';
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.use('/referrals', referralsRouter);
 app.use('/stores', storesRouter);
 app.use('/odoo', odooRouter);
 app.use('/admin', adminRouter);
+app.use('/cashier', cashierRouter);
 
 export default app;

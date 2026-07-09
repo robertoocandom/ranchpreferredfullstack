@@ -36,14 +36,15 @@ model Contractor {
 }
 
 model Store {
-  id      String @id @default(cuid())
-  name    String @unique
-  address String
-  phone   String
-  hoursEs String
-  hoursEn String
-  mapsUrl String
-  tel     String
+  id          String @id @default(cuid())
+  name        String @unique
+  address     String
+  phone       String
+  hoursEs     String
+  hoursEn     String
+  mapsUrl     String
+  tel         String
+  cashierPin  String @default("0000")
 
   contractors Contractor[]
 }

@@ -4,7 +4,9 @@ import { useAuth } from '../auth/AuthContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import logoRanch from '../assets/logo-ranch.png';
 
-export function SignInScreen() {
+interface Props { onCashierMode: () => void; }
+
+export function SignInScreen({ onCashierMode }: Props) {
   const { googleClientId, signInDemo, authError } = useAuth();
   const { t } = useLanguage();
   const buttonHost = useRef<HTMLDivElement>(null);
@@ -80,6 +82,13 @@ export function SignInScreen() {
       <div style={{ fontFamily: font, fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 28, maxWidth: 280, lineHeight: 1.5 }}>
         {t('signInLegal')}
       </div>
+
+      <button
+        onClick={onCashierMode}
+        style={{ marginTop: 24, background: 'none', border: 'none', color: 'rgba(255,255,255,0.25)', fontFamily: font, fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}
+      >
+        {t('modoCajero')}
+      </button>
     </div>
   );
 }

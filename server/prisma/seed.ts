@@ -3,13 +3,13 @@ import { PrismaClient } from '@prisma/client';
 const db = new PrismaClient();
 
 const stores = [
-  { name: 'Arlington', address: '2201 E Division St, Arlington TX 76011', phone: '(817) 555-0101', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=2201+E+Division+St+Arlington+TX', tel: 'tel:+18175550101' },
-  { name: 'Dallas', address: '4521 Singleton Blvd, Dallas TX 75212', phone: '(214) 555-0182', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=4521+Singleton+Blvd+Dallas+TX', tel: 'tel:+12145550182' },
-  { name: 'Fort Worth', address: '3301 S Riverside Dr, Fort Worth TX 76104', phone: '(817) 555-0234', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=Fort+Worth+TX', tel: 'tel:+18175550234' },
-  { name: 'Waxahachie', address: '1802 N Hwy 287, Waxahachie TX 75165', phone: '(972) 555-0311', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=Waxahachie+TX', tel: 'tel:+19725550311' },
-  { name: 'Grand Prairie', address: '2755 W Pioneer Pkwy, Grand Prairie TX 75051', phone: '(972) 555-0422', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=Grand+Prairie+TX', tel: 'tel:+19725550422' },
-  { name: 'Venus', address: '920 US-67, Venus TX 76084', phone: '(972) 555-0533', hoursEs: 'L–V 7–17h', hoursEn: 'M–F 7am–5pm', maps: 'https://maps.google.com/?q=Venus+TX', tel: 'tel:+19725550533' },
-  { name: 'OKC West', address: '5221 W Reno Ave, Oklahoma City OK 73127', phone: '(405) 555-0644', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=5221+W+Reno+Oklahoma+City+OK', tel: 'tel:+14055550644' },
+  { name: 'Arlington',    address: '2201 E Division St, Arlington TX 76011',       phone: '(817) 555-0101', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=2201+E+Division+St+Arlington+TX',       tel: 'tel:+18175550101', pin: '2847' },
+  { name: 'Dallas',       address: '4521 Singleton Blvd, Dallas TX 75212',          phone: '(214) 555-0182', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=4521+Singleton+Blvd+Dallas+TX',          tel: 'tel:+12145550182', pin: '3619' },
+  { name: 'Fort Worth',   address: '3301 S Riverside Dr, Fort Worth TX 76104',      phone: '(817) 555-0234', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=Fort+Worth+TX',                          tel: 'tel:+18175550234', pin: '1482' },
+  { name: 'Waxahachie',  address: '1802 N Hwy 287, Waxahachie TX 75165',           phone: '(972) 555-0311', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=Waxahachie+TX',                           tel: 'tel:+19725550311', pin: '5073' },
+  { name: 'Grand Prairie',address: '2755 W Pioneer Pkwy, Grand Prairie TX 75051',  phone: '(972) 555-0422', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=Grand+Prairie+TX',                         tel: 'tel:+19725550422', pin: '9164' },
+  { name: 'Venus',        address: '920 US-67, Venus TX 76084',                     phone: '(972) 555-0533', hoursEs: 'L–V 7–17h', hoursEn: 'M–F 7am–5pm',   maps: 'https://maps.google.com/?q=Venus+TX',                               tel: 'tel:+19725550533', pin: '6328' },
+  { name: 'OKC West',    address: '5221 W Reno Ave, Oklahoma City OK 73127',        phone: '(405) 555-0644', hoursEs: 'L–S 7–17h', hoursEn: 'M–Sat 7am–5pm', maps: 'https://maps.google.com/?q=5221+W+Reno+Oklahoma+City+OK',            tel: 'tel:+14055550644', pin: '7591' },
 ];
 
 const rewards = [
@@ -20,11 +20,11 @@ const rewards = [
 ];
 
 async function main() {
-  for (const { maps, ...s } of stores) {
-    const data = { ...s, mapsUrl: maps };
+  for (const { maps, pin, ...s } of stores) {
+    const data = { ...s, mapsUrl: maps, cashierPin: pin };
     await db.store.upsert({
       where: { name: s.name },
-      update: data,
+      update: { cashierPin: pin },
       create: data,
     });
   }

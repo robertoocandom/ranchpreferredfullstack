@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { LanguageProvider } from './i18n/LanguageContext';
 import { AppStateProvider, useAppState } from './state/AppStateContext';
 import { colors } from './theme';
 import { SignInScreen } from './screens/SignInScreen';
+import { CashierScreen } from './screens/CashierScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { ActivateScreen } from './screens/ActivateScreen';
 import { PointsScreen } from './screens/PointsScreen';
@@ -90,7 +91,10 @@ function MainApp() {
 
 function Gate() {
   const { user } = useAuth();
-  if (!user) return <SignInScreen />;
+  const [cashierMode, setCashierMode] = useState(false);
+
+  if (cashierMode) return <CashierScreen onExit={() => setCashierMode(false)} />;
+  if (!user) return <SignInScreen onCashierMode={() => setCashierMode(true)} />;
   return (
     <AppStateProvider>
       <MainApp />

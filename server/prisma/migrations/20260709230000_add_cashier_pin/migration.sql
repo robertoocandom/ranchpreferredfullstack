@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Store" ADD COLUMN "cashierPin" TEXT NOT NULL DEFAULT '0000';
