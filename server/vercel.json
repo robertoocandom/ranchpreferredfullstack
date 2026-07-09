@@ -1,0 +1,9 @@
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "crons": [
+    {
+      "path": "/odoo/sync",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
