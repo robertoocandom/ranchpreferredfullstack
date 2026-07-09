@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SyncState {
+  id         String   @id @default("odoo")
+  lastSyncAt DateTime @default(now())
+}
+
+model Contractor {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  googleSub     String?  @unique
+  picture       String?
+  points        Int      @default(0)
+  memberSince   DateTime @default(now())
+  homeStoreId   String?
+  homeStore     Store?   @relation(fields: [homeStoreId], references: [id])
+  referralCode  String   @unique
+  odooPartnerId String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transactions  PointsTransaction[]
+  redemptions   Redemption[]
+  referralsMade Referral[]          @relation("ReferrerRelation")
+  qrTokens      QrToken[]
+  fraudAlerts   FraudAlert[]
+}
+
+model Store {
+  id      String @id @default(cuid())
+  name    String @unique
+  address String
+  phone   String
+  hoursEs String
+  hoursEn String
+  mapsUrl String
+  tel     String
+
+  contractors Contractor[]
+}
+
+enum TransactionType {
+  PURCHASE
+  REDEMPTION
+  REFERRAL
+  BONUS
+  ODOO_SYNC
+}
+
+model PointsTransaction {
+  id            String          @id @default(cuid())
+  contractorId  String
+  contractor    Contractor      @relation(fields: [contractorId], references: [id])
+  type          TransactionType
+  points        Int
+  balanceAfter  Int
+  descriptionEs String
+  descriptionEn String
+  source        String
+  createdAt     DateTime        @default(now())
+}
+
+model Reward {
+  id     String  @id @default(cuid())
+  nameEs String
+  nameEn String
+  pts    Int
+  active Boolean @default(true)
+
+  redemptions Redemption[]
+}
+
+enum RedemptionStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
+}
+
+model Redemption {
+  id           String           @id @default(cuid())
+  contractorId String
+  contractor   Contractor       @relation(fields: [contractorId], references: [id])
+  rewardId     String?
+  reward       Reward?          @relation(fields: [rewardId], references: [id])
+  nameEs       String
+  nameEn       String
+  pts          Int
+  dollars      Int
+  status       RedemptionStatus @default(PENDING)
+  qrTokenId    String           @unique
+  qrToken      QrToken          @relation(fields: [qrTokenId], references: [id])
+  createdAt    DateTime         @default(now())
+  confirmedAt  DateTime?
+}
+
+enum QrPurpose {
+  ACTIVATE
+  REDEEM
+}
+
+model QrToken {
+  id           String     @id @default(cuid())
+  jti          String     @unique
+  contractorId String
+  contractor   Contractor @relation(fields: [contractorId], references: [id])
+  purpose      QrPurpose
+  payload      String
+  expiresAt    DateTime
+  usedAt       DateTime?
+  createdAt    DateTime   @default(now())
+
+  redemption Redemption?
+}
+
+model Referral {
+  id          String   @id @default(cuid())
+  referrerId  String
+  referrer    Contractor @relation("ReferrerRelation", fields: [referrerId], references: [id])
+  refereeName String
+  amount      Float
+  qualified   Boolean
+  pts         Int
+  date        DateTime @default(now())
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model FraudAlert {
+  id           String        @id @default(cuid())
+  contractorId String?
+  contractor   Contractor?   @relation(fields: [contractorId], references: [id])
+  type         String
+  severity     AlertSeverity
+  details      String
+  resolved     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+}
