@@ -71,7 +71,7 @@ adminRouter.get('/redemptions', requireAdmin, async (req, res) => {
 
 // Confirm a redemption (staff action)
 adminRouter.post('/redemptions/:id/confirm', requireAdmin, async (req, res) => {
-  const { id } = req.params;
+  const id = req.params['id'] as string;
   const redemption = await db.redemption.findUnique({ where: { id } });
   if (!redemption) { res.status(404).json({ error: 'not_found' }); return; }
   if (redemption.status !== 'PENDING') { res.status(409).json({ error: 'not_pending' }); return; }
@@ -118,7 +118,7 @@ adminRouter.post('/rewards', requireAdmin, async (req, res) => {
 
 // Toggle reward active / update
 adminRouter.patch('/rewards/:id', requireAdmin, async (req, res) => {
-  const { id } = req.params;
+  const id = req.params['id'] as string;
   const data = req.body as { nameEs?: string; nameEn?: string; pts?: number; active?: boolean };
   const reward = await db.reward.update({ where: { id }, data });
   res.json(reward);
@@ -149,7 +149,7 @@ adminRouter.get('/fraud-alerts', requireAdmin, async (req, res) => {
 
 // Resolve a fraud alert
 adminRouter.patch('/fraud-alerts/:id/resolve', requireAdmin, async (req, res) => {
-  const { id } = req.params;
+  const id = req.params['id'] as string;
   await db.fraudAlert.update({ where: { id }, data: { resolved: true } });
   res.json({ ok: true });
 });
