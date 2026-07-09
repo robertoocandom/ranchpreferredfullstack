@@ -18,6 +18,7 @@ pointsRouter.get('/me', requireAuth, async (req, res) => {
     memberSince: c.memberSince,
     referralCode: c.referralCode,
     homeStore: homeStore?.name ?? null,
+    isAdmin: c.isAdmin,
   });
 });
 

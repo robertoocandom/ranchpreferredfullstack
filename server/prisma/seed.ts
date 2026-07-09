@@ -37,7 +37,7 @@ async function main() {
   const arlington = await db.store.findFirst({ where: { name: 'Arlington' } });
   const carlos = await db.contractor.upsert({
     where: { email: 'carlos.h@contractormail.com' },
-    update: {},
+    update: { isAdmin: true },
     create: {
       name: 'Carlos Hernández',
       email: 'carlos.h@contractormail.com',
@@ -45,6 +45,7 @@ async function main() {
       referralCode: 'CH4471',
       homeStoreId: arlington?.id ?? null,
       memberSince: new Date('2024-01-15'),
+      isAdmin: true,
     },
   });
 

@@ -31,3 +31,13 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     res.status(401).json({ error: 'invalid_token' });
   }
 }
+
+export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  await requireAuth(req, res, () => {
+    if (!req.contractor?.isAdmin) {
+      res.status(403).json({ error: 'forbidden' });
+      return;
+    }
+    next();
+  });
+}

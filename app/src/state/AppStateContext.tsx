@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api, ApiError, type HistoryItem, type MeResponse, type RedeemResponse, type RewardDto, type ReferralDto, type StoreDto } from '../api/client';
 
-export type TabKey = 'home' | 'activate' | 'points' | 'stores' | 'account';
+export type TabKey = 'home' | 'activate' | 'points' | 'stores' | 'account' | 'admin';
 
 interface AppStateValue {
   activeTab: TabKey;

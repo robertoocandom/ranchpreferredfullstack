@@ -9,6 +9,7 @@ import { ActivateScreen } from './screens/ActivateScreen';
 import { PointsScreen } from './screens/PointsScreen';
 import { StoresScreen } from './screens/StoresScreen';
 import { AccountScreen } from './screens/AccountScreen';
+import { AdminScreen } from './screens/AdminScreen';
 import { ReferScreen } from './screens/ReferScreen';
 import { RedeemModal } from './screens/RedeemModal';
 import { MessageModal } from './screens/MessageModal';
@@ -73,6 +74,7 @@ function MainApp() {
         {activeTab === 'points' && <PointsScreen />}
         {activeTab === 'stores' && <StoresScreen />}
         {activeTab === 'account' && <AccountScreen />}
+        {activeTab === 'admin' && <AdminScreen />}
       </div>
 
       <BottomNav />

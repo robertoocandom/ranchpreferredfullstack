@@ -20,6 +20,57 @@ export interface MeResponse {
   memberSince: string;
   referralCode: string;
   homeStore: string | null;
+  isAdmin: boolean;
+}
+
+export interface AdminStats {
+  contractors: number;
+  pendingRedemptions: number;
+  unresolvedAlerts: number;
+  totalPoints: number;
+}
+
+export interface AdminContractor {
+  id: string;
+  name: string;
+  email: string;
+  points: number;
+  tier: string;
+  memberSince: string;
+  homeStore: string | null;
+  isAdmin: boolean;
+}
+
+export interface AdminRedemption {
+  id: string;
+  contractorName: string;
+  contractorEmail: string;
+  nameEs: string;
+  nameEn: string;
+  pts: number;
+  dollars: number;
+  status: 'PENDING' | 'CONFIRMED' | 'EXPIRED';
+  createdAt: string;
+  confirmedAt: string | null;
+}
+
+export interface AdminReward {
+  id: string;
+  nameEs: string;
+  nameEn: string;
+  pts: number;
+  active: boolean;
+}
+
+export interface AdminAlert {
+  id: string;
+  type: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+  details: string;
+  resolved: boolean;
+  createdAt: string;
+  contractorName: string | null;
+  contractorEmail: string | null;
 }
 
 export interface HistoryItem {
@@ -111,6 +162,15 @@ export const api = {
   redeem: (body: { rewardId?: string; customPts?: number }) => request<RedeemResponse>('/redeem', { method: 'POST', body }),
   confirmRedeem: (jti: string) => request<{ points: number }>('/redeem/confirm', { method: 'POST', body: { jti } }),
   activate: () => request<{ jti: string; qrValue: string; expiresAt: string }>('/activate', { method: 'POST' }),
+  adminStats: () => request<AdminStats>('/admin/stats'),
+  adminContractors: () => request<AdminContractor[]>('/admin/contractors'),
+  adminRedemptions: (status?: string) => request<AdminRedemption[]>(`/admin/redemptions${status ? `?status=${status}` : ''}`),
+  adminConfirmRedemption: (id: string) => request<{ ok: boolean }>(`/admin/redemptions/${id}/confirm`, { method: 'POST' }),
+  adminRewards: () => request<AdminReward[]>('/admin/rewards'),
+  adminCreateReward: (body: { nameEs: string; nameEn: string; pts: number }) => request<AdminReward>('/admin/rewards', { method: 'POST', body }),
+  adminUpdateReward: (id: string, body: Partial<{ nameEs: string; nameEn: string; pts: number; active: boolean }>) => request<AdminReward>(`/admin/rewards/${id}`, { method: 'PATCH', body }),
+  adminAlerts: () => request<AdminAlert[]>('/admin/fraud-alerts'),
+  adminResolveAlert: (id: string) => request<{ ok: boolean }>(`/admin/fraud-alerts/${id}/resolve`, { method: 'PATCH' }),
 };
 
 export { ApiError };

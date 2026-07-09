@@ -9,3 +9,4 @@ prisma/dev.db-journal
 # Secrets — .env has working dev defaults and is fine to keep committed,
 # but any local override should not be
 .env.local
+.vercel

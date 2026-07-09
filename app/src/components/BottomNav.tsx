@@ -1,9 +1,9 @@
-import { Home, QrCode, Award, MapPin, User } from 'lucide-react';
+import { Home, QrCode, Award, MapPin, User, ShieldCheck } from 'lucide-react';
 import { useAppState, type TabKey } from '../state/AppStateContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { colors, font } from '../theme';
 
-const TABS: Array<{ key: TabKey; icon: typeof Home; labelKey: 'navInicio' | 'navActivar' | 'navPuntos' | 'navTiendas' | 'navCuenta' }> = [
+const BASE_TABS: Array<{ key: TabKey; icon: typeof Home; labelKey: 'navInicio' | 'navActivar' | 'navPuntos' | 'navTiendas' | 'navCuenta' | 'navAdmin' }> = [
   { key: 'home', icon: Home, labelKey: 'navInicio' },
   { key: 'activate', icon: QrCode, labelKey: 'navActivar' },
   { key: 'points', icon: Award, labelKey: 'navPuntos' },
@@ -12,8 +12,9 @@ const TABS: Array<{ key: TabKey; icon: typeof Home; labelKey: 'navInicio' | 'nav
 ];
 
 export function BottomNav() {
-  const { activeTab, setActiveTab } = useAppState();
+  const { activeTab, setActiveTab, me } = useAppState();
   const { t } = useLanguage();
+  const TABS = me?.isAdmin ? [...BASE_TABS, { key: 'admin' as TabKey, icon: ShieldCheck, labelKey: 'navAdmin' as const }] : BASE_TABS;
 
   return (
     <nav

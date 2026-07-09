@@ -7,6 +7,7 @@ import { qrRouter } from './qr/routes';
 import { referralsRouter } from './referrals/routes';
 import { storesRouter } from './stores/routes';
 import { odooRouter } from './odoo/routes';
+import { adminRouter } from './admin/routes';
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use('/', qrRouter);       // /redeem, /redeem/confirm, /activate, /activate/
 app.use('/referrals', referralsRouter);
 app.use('/stores', storesRouter);
 app.use('/odoo', odooRouter);
+app.use('/admin', adminRouter);
 
 export default app;
