@@ -9,6 +9,7 @@ import { storesRouter } from './stores/routes';
 import { odooRouter } from './odoo/routes';
 import { adminRouter } from './admin/routes';
 import { cashierRouter } from './cashier/routes';
+import { pushRouter } from './push/routes';
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.use('/stores', storesRouter);
 app.use('/odoo', odooRouter);
 app.use('/admin', adminRouter);
 app.use('/cashier', cashierRouter);
+app.use('/push', pushRouter);
 
 export default app;

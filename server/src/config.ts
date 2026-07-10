@@ -12,4 +12,6 @@ export const config = {
   googleClientId: process.env.GOOGLE_CLIENT_ID || null,
   corsOrigin: (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',').map(s => s.trim()),
   fraudWebhookUrl: process.env.FRAUD_WEBHOOK_URL || null,
+  vapidPublicKey: process.env.VAPID_PUBLIC_KEY || null,
+  vapidPrivateKey: process.env.VAPID_PRIVATE_KEY || null,
 };

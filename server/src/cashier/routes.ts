@@ -9,6 +9,7 @@ import {
   flagExpiredQr,
   flagQrReplay,
 } from '../fraud/engine';
+import { sendPushToContractor } from '../push/sender';
 
 export const cashierRouter = Router();
 
@@ -128,6 +129,11 @@ cashierRouter.post('/scan', requireCashier, async (req, res) => {
     await checkActivationVelocity(contractor.id);
     await checkLargePurchase(contractor.id, amountUsd);
 
+    void sendPushToContractor(contractor.id, {
+      title: '¡Puntos acreditados! 🎉',
+      body: `+${pts} puntos por tu compra de $${amountUsd.toFixed(2)}. Saldo: ${balanceAfter} pts.`,
+    });
+
     res.json({
       purpose: 'ACTIVATE',
       contractorName: contractor.name,
@@ -167,6 +173,11 @@ cashierRouter.post('/scan', requireCashier, async (req, res) => {
   ]);
 
   await checkRedemptionVelocity(contractor.id);
+
+  void sendPushToContractor(contractor.id, {
+    title: '¡Canje confirmado! ✅',
+    body: `${redemption.nameEs} — $${redemption.dollars} crédito. Saldo: ${balanceAfter} pts.`,
+  });
 
   res.json({
     purpose: 'REDEEM',

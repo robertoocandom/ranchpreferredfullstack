@@ -171,6 +171,10 @@ export const api = {
   adminUpdateReward: (id: string, body: Partial<{ nameEs: string; nameEn: string; pts: number; active: boolean }>) => request<AdminReward>(`/admin/rewards/${id}`, { method: 'PATCH', body }),
   adminAlerts: () => request<AdminAlert[]>('/admin/fraud-alerts'),
   adminResolveAlert: (id: string) => request<{ ok: boolean }>(`/admin/fraud-alerts/${id}/resolve`, { method: 'PATCH' }),
+  pushSubscribe: (sub: { endpoint: string; keys: { p256dh: string; auth: string } }) =>
+    request<{ ok: boolean }>('/push/subscribe', { method: 'POST', body: sub }),
+  pushUnsubscribe: (endpoint: string) =>
+    request<{ ok: boolean }>('/push/unsubscribe', { method: 'DELETE', body: { endpoint } }),
   cashierStores: () => request<{ id: string; name: string; address: string }[]>('/cashier/stores'),
   cashierLogin: (storeId: string, pin: string) => request<{ token: string; storeName: string }>('/cashier/login', { method: 'POST', body: { storeId, pin } }),
   cashierScan: (cashierToken: string, qrValue: string, amountUsd?: number) =>

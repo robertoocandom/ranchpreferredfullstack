@@ -28,11 +28,12 @@ model Contractor {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  transactions  PointsTransaction[]
-  redemptions   Redemption[]
-  referralsMade Referral[]          @relation("ReferrerRelation")
-  qrTokens      QrToken[]
-  fraudAlerts   FraudAlert[]
+  transactions      PointsTransaction[]
+  redemptions       Redemption[]
+  referralsMade     Referral[]          @relation("ReferrerRelation")
+  qrTokens          QrToken[]
+  fraudAlerts       FraudAlert[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Store {
@@ -148,4 +149,14 @@ model FraudAlert {
   details      String
   resolved     Boolean       @default(false)
   createdAt    DateTime      @default(now())
+}
+
+model PushSubscription {
+  id           String     @id @default(cuid())
+  contractorId String
+  contractor   Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  endpoint     String     @unique
+  p256dh       String
+  auth         String
+  createdAt    DateTime   @default(now())
 }

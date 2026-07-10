@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api, ApiError, type HistoryItem, type MeResponse, type RedeemResponse, type RewardDto, type ReferralDto, type StoreDto } from '../api/client';
+import { subscribeToPush, unsubscribeFromPush, pushSupported } from '../hooks/usePush';
 
 export type TabKey = 'home' | 'activate' | 'points' | 'stores' | 'account' | 'admin';
 
@@ -107,6 +108,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AppStateValue>(() => {
+    const notifState = { notifPromos, notifPuntos, notifTiendas, notifReferidos };
+
     const toggleNotif: AppStateValue['toggleNotif'] = (key) => {
       const setters = {
         notifPromos: setNotifPromos,
@@ -114,7 +117,22 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         notifTiendas: setNotifTiendas,
         notifReferidos: setNotifReferidos,
       } as const;
+
+      const currentValue = notifState[key];
+      const turningOn = !currentValue;
       setters[key]((v) => !v);
+
+      if (!pushSupported()) return;
+
+      if (turningOn) {
+        void subscribeToPush();
+      } else {
+        // Unsubscribe only when ALL are being turned off
+        const remaining = Object.entries(notifState)
+          .filter(([k]) => k !== key)
+          .some(([, v]) => v);
+        if (!remaining) void unsubscribeFromPush();
+      }
     };
 
     return {
